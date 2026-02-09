@@ -3,6 +3,8 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Casts\Attribute;
+use Illuminate\Support\Facades\Crypt;
 
 class Doctor extends Model
 {
@@ -14,4 +16,20 @@ class Doctor extends Model
         'category',
         'poli',
     ];
+    protected function nip(): Attribute
+    {
+        return Attribute::make(
+            get: function ($value) {
+                if (!$value) {
+                    return null;
+                }
+                try {
+                    return Crypt::decrypString($value);
+                } catch (\Throwable $e) {
+                    return $value;
+                }
+            },
+            set: fn($value) => $value ? Crypt::encryptString($value) : null
+        );
+    }
 }
