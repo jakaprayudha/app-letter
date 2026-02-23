@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Support\Facades\Crypt;
+use Barryvdh\DomPDF\Facade\Pdf;
 
 class Doctor extends Model
 {
@@ -46,5 +47,14 @@ class Doctor extends Model
                 }
             }
         );
+    }
+
+    public static function exportPdf($query = null)
+    {
+        $doctors = $query ? $query->get() :
+            self::orderBy('name')->get();
+        $pdf = Pdf::loadView('pdf.doctors', ['doctors' => $doctors])
+            ->setPaper('a4', 'landscape');
+        return $pdf;
     }
 }
