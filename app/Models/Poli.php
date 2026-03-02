@@ -10,4 +10,9 @@ class Poli extends Model
     protected $fillable = [
         'policlinic'
     ];
+
+    public function sickLetters()
+    {
+        return $this->hasMany(SickLetter::class);
+    }
 }
