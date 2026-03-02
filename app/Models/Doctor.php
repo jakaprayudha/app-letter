@@ -57,4 +57,8 @@ class Doctor extends Model
             ->setPaper('a4', 'landscape');
         return $pdf;
     }
+    public function sickLetters()
+    {
+        return $this->hasMany(SickLetter::class);
+    }
 }
