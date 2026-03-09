@@ -21,6 +21,15 @@
    <p>Dokter</p>
    <br>
    <p>{{$data->doctor->name}}</p>
+   <br>
+   <div>
+      <p>Scan QR Code Untuk Verifikasi Dokumen</p>
+      <img src="data:image/png;base64,{{ base64_encode(
+   QrCode::format('png')
+   ->size(200)
+   ->generate(route('sick-letter.print',$data->id))
+   ) }}">
+   </div>
 </body>
 
 </html>
