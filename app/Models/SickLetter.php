@@ -26,14 +26,17 @@ class SickLetter extends Model
     protected static function booted()
     {
         static::creating(function ($model) {
-            $last = self::latest()->first();
+
+            $last = self::orderBy('id', 'desc')->first();
+
             $nextNumber = 1;
+
             if ($last && $last->number_letter) {
-                $lastNumber = (int) substr($last->number_letter, 4);
+                $lastNumber = (int) substr($last->number_letter, -4); // 🔥 FIX
                 $nextNumber = $lastNumber + 1;
             }
+
             $model->number_letter = 'SK-' . date('Y') . '-' . str_pad($nextNumber, 4, '0', STR_PAD_LEFT);
-            //SK-2026-0001
         });
     }
 }
