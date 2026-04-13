@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\DB;
 
 class SickLetter extends Model
 {
@@ -23,7 +24,7 @@ class SickLetter extends Model
     {
         return $this->belongsTo(Poli::class);
     }
-    use Illuminate\Support\Facades\DB;
+
 
     protected static function booted()
     {
