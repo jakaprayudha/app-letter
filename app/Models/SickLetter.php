@@ -23,20 +23,27 @@ class SickLetter extends Model
     {
         return $this->belongsTo(Poli::class);
     }
+    use Illuminate\Support\Facades\DB;
+
     protected static function booted()
     {
         static::creating(function ($model) {
 
-            $last = self::orderBy('id', 'desc')->first();
+            DB::transaction(function () use ($model) {
 
-            $nextNumber = 1;
+                $last = self::lockForUpdate()
+                    ->orderBy('id', 'desc')
+                    ->first();
 
-            if ($last && $last->number_letter) {
-                $lastNumber = (int) substr($last->number_letter, -4); // 🔥 FIX
-                $nextNumber = $lastNumber + 1;
-            }
+                $nextNumber = 1;
 
-            $model->number_letter = 'SK-' . date('Y') . '-' . str_pad($nextNumber, 4, '0', STR_PAD_LEFT);
+                if ($last && $last->number_letter) {
+                    $lastNumber = (int) substr($last->number_letter, -4);
+                    $nextNumber = $lastNumber + 1;
+                }
+
+                $model->number_letter = 'SK-' . date('Y') . '-' . str_pad($nextNumber, 4, '0', STR_PAD_LEFT);
+            });
         });
     }
 }
