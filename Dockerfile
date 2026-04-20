@@ -9,19 +9,18 @@ COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
 WORKDIR /app
 COPY . .
 
-# install dependency dulu
+# install dependency
 RUN composer install --no-dev --optimize-autoloader
 
-# setup sqlite
-RUN mkdir -p database && touch database/database.sqlite
-
 # permission
-RUN chmod -R 777 storage bootstrap/cache database
+RUN chmod -R 777 storage bootstrap/cache
 
-# generate key + migrate
-RUN  php artisan migrate --force && \
-   php artisan config:clear && \
-   php artisan cache:clear
+# clear cache
+RUN php artisan config:clear && php artisan cache:clear
 
-# start server (IMPORTANT)
-CMD php -S 0.0.0.0:${PORT:-8000} -t public
+# START APP (INI KUNCI)
+CMD mkdir -p /app/database && \
+   touch /app/database/database.sqlite && \
+   chmod -R 777 /app/database && \
+   php artisan migrate --force && \
+   php -S 0.0.0.0:${PORT:-8000} -t public
