@@ -36,6 +36,7 @@ RUN php artisan config:clear && php artisan cache:clear
 
 # start app
 CMD sh -c "\
+   php artisan view:clear && \
    php artisan config:clear && \
    php artisan migrate --force && \
    php -S 0.0.0.0:${PORT:-8000} -t public \
