@@ -19,8 +19,7 @@ RUN mkdir -p database && touch database/database.sqlite
 RUN chmod -R 777 storage bootstrap/cache database
 
 # generate key + migrate
-RUN php artisan key:generate && \
-   php artisan migrate --force && \
+RUN  php artisan migrate --force && \
    php artisan config:clear && \
    php artisan cache:clear
 
