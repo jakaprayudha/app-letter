@@ -1,11 +1,9 @@
-FROM php:8.2-cli
+FROM php:8.3-cli
 
-# Install dependencies + extensions
 RUN apt-get update && apt-get install -y \
-   git unzip libzip-dev libicu-dev \
-   && docker-php-ext-install intl zip pdo pdo_mysql
+   git unzip libzip-dev libicu-dev libpng-dev \
+   && docker-php-ext-install intl zip gd pdo pdo_mysql
 
-# Install composer
 COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
 
 WORKDIR /app
