@@ -8,7 +8,11 @@ COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
 
 WORKDIR /app
 COPY . .
-
+# install node
+RUN apt-get install -y nodejs npm
+# install & build frontend
+RUN npm install && npm run build
+RUN php artisan filament:assets
 # install dependency
 RUN composer install --no-dev --optimize-autoloader
 
