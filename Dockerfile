@@ -1,24 +1,32 @@
 FROM php:8.4-cli
 
+# system deps + node 18 (WAJIB untuk Vite)
 RUN apt-get update && apt-get install -y \
-   git unzip libzip-dev libicu-dev libpng-dev \
-   && docker-php-ext-install intl zip gd pdo pdo_mysql
+   git unzip libzip-dev libicu-dev libpng-dev curl \
+   && docker-php-ext-install intl zip gd pdo pdo_mysql \
+   && curl -fsSL https://deb.nodesource.com/setup_18.x | bash - \
+   && apt-get install -y nodejs
 
 COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
 
 WORKDIR /app
 COPY . .
-# install node
-RUN apt-get install -y nodejs npm
-# install & build frontend
-RUN npm install && npm run build
-RUN php artisan filament:assets
-# install dependency
+
+# install php deps dulu (lebih aman untuk artisan command)
 RUN composer install --no-dev --optimize-autoloader
 
-# buat sqlite (FIXED)
-RUN mkdir -p /app/database && \
-   touch /app/database/database.sqlite
+# 🔥 build frontend
+RUN npm install
+RUN npm run build
+
+# optional (Filament)
+RUN php artisan filament:assets || true
+
+# debug: pastikan build ada
+RUN ls -la public/build
+
+# sqlite setup
+RUN mkdir -p /app/database && touch /app/database/database.sqlite
 
 # permission
 RUN chmod -R 777 storage bootstrap/cache /app/database
@@ -26,11 +34,9 @@ RUN chmod -R 777 storage bootstrap/cache /app/database
 # clear cache
 RUN php artisan config:clear && php artisan cache:clear
 
-# entrypoint script inline
+# start app
 CMD sh -c "\
-   ls -la /app/database && \
    php artisan config:clear && \
-   php artisan cache:clear && \
    php artisan migrate --force && \
    php -S 0.0.0.0:${PORT:-8000} -t public \
    "
