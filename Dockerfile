@@ -24,6 +24,9 @@ RUN php artisan config:clear && php artisan cache:clear
 
 # entrypoint script inline
 CMD sh -c "\
+   ls -la /app/database && \
+   php artisan config:clear && \
+   php artisan cache:clear && \
    php artisan migrate --force && \
    php -S 0.0.0.0:${PORT:-8000} -t public \
    "
