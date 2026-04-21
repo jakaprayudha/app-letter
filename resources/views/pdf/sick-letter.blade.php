@@ -13,7 +13,7 @@
    <p>Dokter : {{$data->doctor->name}}</p>
    <p>Poliklinik : {{$data->poli->policlinic}}</p>
    <p>Nama Pasien : {{$data->patient_name}}</p>
-   <p>Tanggal : {{$data->start_date}} s/d {{$data->end_date}}</p>
+   <p>Tanggal Kunjungan : {{$data->start_date}} s/d {{$data->end_date}}</p>
    <br>
    <p>Diagnosa : </p>
    <p>{{$data->diagnosis}}</p>
