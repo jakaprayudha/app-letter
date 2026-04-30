@@ -20,6 +20,10 @@ RUN npm install
 RUN npm run build
 
 # optional (Filament)
+RUN php artisan filament:assets || true
+
+# debug: pastikan build ada
+RUN ls -la public/build
 
 # sqlite setup
 RUN mkdir -p /app/database && touch /app/database/database.sqlite
@@ -27,10 +31,13 @@ RUN mkdir -p /app/database && touch /app/database/database.sqlite
 # permission
 RUN chmod -R 777 storage bootstrap/cache /app/database
 
+# clear cache
+RUN php artisan config:clear && php artisan cache:clear
 
+# start app
 CMD sh -c "\
    php artisan view:clear && \
-
+   php artisan config:clear && \
    php artisan migrate --force && \
    php -S 0.0.0.0:${PORT:-8000} -t public \
    "
